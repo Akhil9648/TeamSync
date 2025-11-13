@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { imagekit } from "../server/imagekit.js";
 
 // REGISTER USER
 export const registerUser = async (req, res, next) => {
@@ -16,6 +17,17 @@ export const registerUser = async (req, res, next) => {
       return res.status(409).json({ message: "User already exists." });
     }
 
+    // Upload avatar if provided
+    let uploadedAvatarUrl = null;
+    if (avatarUrl) {
+      const uploadImage = await imagekit.upload({
+        file: avatarUrl,
+        fileName: `${name}_avatar.jpg`,
+        folder: "/avatars"
+      });
+      uploadedAvatarUrl = uploadImage.url;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -23,11 +35,11 @@ export const registerUser = async (req, res, next) => {
       email,
       password: hashedPassword,
       role,
-      avatarUrl,
+      avatarUrl: uploadedAvatarUrl
     });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "7d"
     });
 
     return res.status(201).json({
@@ -38,13 +50,14 @@ export const registerUser = async (req, res, next) => {
         name: user.name,
         email: user.email,
         role: user.role,
-      },
+        avatarUrl: user.avatarUrl
+      }
     });
+
   } catch (error) {
     next(error);
   }
 };
-
 
 
 // LOGIN USER
@@ -53,9 +66,7 @@ export const loginUser = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required." });
+      return res.status(400).json({ message: "Email and password are required." });
     }
 
     const user = await User.findOne({ email });
@@ -69,7 +80,7 @@ export const loginUser = async (req, res, next) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "7d"
     });
 
     return res.status(200).json({
@@ -80,13 +91,14 @@ export const loginUser = async (req, res, next) => {
         name: user.name,
         email: user.email,
         role: user.role,
-      },
+        avatarUrl: user.avatarUrl
+      }
     });
+
   } catch (error) {
     next(error);
   }
 };
-
 
 
 // GET PROFILE
@@ -95,14 +107,16 @@ export const getProfile = async (req, res, next) => {
     const userId = req.user.id;
 
     const user = await User.findById(userId).select("-password");
+
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
     return res.status(200).json({
       message: "User fetched successfully.",
-      profile: user,
+      profile: user
     });
+
   } catch (error) {
     next(error);
   }
