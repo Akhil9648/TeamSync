@@ -1,7 +1,9 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import { User, Mail, Briefcase, Edit2, Save, X, Camera } from 'lucide-react';
 
-// Auth Context
+// ------------------ AUTH CONTEXT ------------------
+
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
@@ -12,20 +14,14 @@ const AuthProvider = ({ children }) => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-
         if (!token) {
           setLoading(false);
           return;
         }
-
         const res = await fetch("/api/auth/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         const data = await res.json();
-
         if (res.ok) {
           setCurrentUser(data.profile);
         } else {
@@ -37,7 +33,6 @@ const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
     fetchProfile();
   }, []);
 
@@ -55,24 +50,33 @@ const useAuth = () => useContext(AuthContext);
 const Header = () => {
   const { currentUser } = useAuth();
 
+  if (!currentUser) return null;
+
   return (
     <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">My Profile</h1>
+      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">My Profile</h1>
 
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="font-semibold">{currentUser.name}</p>
-              <p className="text-sm text-blue-100">{currentUser.role}</p>
-            </div>
+        {currentUser.role === "Team Leader" && (
+          <Link
+            to="/admin"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:from-blue-700 hover:to-purple-700 transition"
+          >
+            Go to Admin Dashboard
+          </Link>
+        )}
 
-            <img
-              src={currentUser.avatarUrl || "/default-avatar.png"}
-              alt={currentUser.name}
-              className="w-12 h-12 rounded-full border-2 border-white shadow-md"
-            />
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <p className="font-semibold">{currentUser.name}</p>
+            <p className="text-sm text-blue-100">{currentUser.role}</p>
           </div>
+
+          <img
+            src={currentUser.avatarUrl || "/default-avatar.png"}
+            alt={currentUser.name}
+            className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+          />
         </div>
       </div>
     </header>
@@ -120,7 +124,6 @@ const ProfileDetails = ({ user, isOwner }) => {
   const handleAvatarChange = () => {
     const seeds = ['John', 'Jane', 'Alex', 'Sam', 'Chris', 'Morgan', 'Taylor', 'Jordan'];
     const randomSeed = seeds[Math.floor(Math.random() * seeds.length)];
-
     setFormData({
       ...formData,
       avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}`,
@@ -135,7 +138,7 @@ const ProfileDetails = ({ user, isOwner }) => {
 
         <div className="relative px-6 pb-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 -mt-16">
-            
+
             <div className="relative">
               <img
                 src={formData.avatarUrl || "/default-avatar.png"}
@@ -283,6 +286,7 @@ const ProfileDetails = ({ user, isOwner }) => {
   );
 };
 
+
 // ------------------ MAIN APP ------------------
 
 const App = () => {
@@ -303,6 +307,7 @@ const App = () => {
     </div>
   );
 };
+
 
 // ------------------ EXPORT ------------------
 
