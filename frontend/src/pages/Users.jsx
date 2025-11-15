@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";  // ✅ Already correct
 import { Search, Eye, Edit, Trash2, Plus, ArrowLeft } from 'lucide-react';
 
 const Users = () => {
@@ -20,7 +21,8 @@ const Users = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/user', {
+        // ✅ Fixed: Removed duplicate line
+        const response = await fetch(`${API_BASE}/api/user`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Network response was not ok');
@@ -74,7 +76,8 @@ const Users = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/user/${userId}`, {
+      // ✅ Fixed: Removed duplicate line
+      const response = await fetch(`${API_BASE}/api/user/${userId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

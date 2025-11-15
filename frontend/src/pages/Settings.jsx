@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 import { ArrowLeft, Save, X } from "lucide-react";
 
 const AdminSettings = () => {
@@ -24,7 +25,7 @@ const AdminSettings = () => {
         const token = localStorage.getItem('token');
         
         // Try to fetch from backend first
-        const response = await fetch('/api/settings', {
+        const response = await fetch(`${API_BASE}/api/settings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -69,7 +70,7 @@ const AdminSettings = () => {
       const token = localStorage.getItem('token');
       
       // Try to save to backend
-      const response = await fetch('/api/settings', {
+      const response = await fetch(`${API_BASE}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

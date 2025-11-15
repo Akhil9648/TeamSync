@@ -11,6 +11,11 @@ import activityRouter from './src/routes/activity.routes.js';
 dotenv.config();
 
 const app = express();
+const corsOptions = {
+  origin: '*',
+  credentials: true   
+};
+
 const PORT = process.env.PORT || 3000;
 
 connectDB();
@@ -20,7 +25,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // CORS
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Routes
 app.use("/api/auth", authRoutes);

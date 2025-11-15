@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config/api';
 import { ArrowLeft } from 'lucide-react';
 
 const UserDetails = () => {
@@ -14,7 +15,7 @@ const UserDetails = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/user/${id}`, {
+        const response = await fetch(`${API_BASE}/api/user/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to fetch user');

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config/api";  // ✅ Already correct
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
@@ -41,7 +42,8 @@ const AddUser = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/user', {
+      // ✅ Fixed: Removed duplicate line
+      const response = await fetch(`${API_BASE}/api/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

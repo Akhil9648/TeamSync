@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 
 export default function MyTeams() {
   const [teams, setTeams] = useState([]);
@@ -8,7 +9,7 @@ export default function MyTeams() {
     const fetchTeams = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/team/my-teams", {
+        const res = await fetch(`${API_BASE}/api/team/my-teams`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

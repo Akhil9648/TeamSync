@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Camera } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate,Link } from 'react-router-dom';
+import { API_BASE } from '../config/api';
 export default function AuthPage() {
   const navigate=useNavigate();
   const [isLogin, setIsLogin] = useState(true);
@@ -35,7 +36,7 @@ export default function AuthPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const url = isLogin ? '/api/auth/login' : '/api/auth/register';
+    const url = isLogin ? `${API_BASE}/api/auth/login` : `${API_BASE}/api/auth/register`;
     const payload = isLogin
       ? { email: formData.email, password: formData.password }
       : {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 import { Users, ListChecks, UserCog, Activity, Download, ArrowLeft } from 'lucide-react';
 
 const getActivityIcon = (type) => {
@@ -24,7 +25,7 @@ const ActivityPage = () => {
       const token = localStorage.getItem('token');
       console.log('Fetching with token:', token ? 'Token exists' : 'No token');  // Debug
       
-      const response = await fetch('/api/activity', {
+      const response = await fetch(`${API_BASE}/api/activity`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -54,7 +55,7 @@ const ActivityPage = () => {
   const handleExport = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/activity/export', {
+      const response = await fetch(`${API_BASE}/api/activity/export`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Failed to export logs');

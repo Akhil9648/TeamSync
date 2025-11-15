@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, ArrowLeft } from "lucide-react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 
 const Teams = () => {
@@ -13,7 +14,7 @@ const Teams = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/team', {
+        const response = await fetch(`${API_BASE}/api/team`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to fetch teams');
@@ -32,7 +33,7 @@ const Teams = () => {
     if (!window.confirm("Are you sure you want to delete this team?")) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/team/${teamId}`, {
+      const response = await fetch(`${API_BASE}/api/team/${teamId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

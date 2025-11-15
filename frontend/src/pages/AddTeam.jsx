@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Users, User, Target, TrendingUp, X } from 'lucide-react';
+import { API_BASE } from '../config/api';  // ✅ Added
 
 const AddTeam = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const AddTeam = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/user', {
+        const response = await fetch(`${API_BASE}/api/user`, {  // ✅ Updated
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -72,12 +73,12 @@ const AddTeam = () => {
       const teamData = {
         name: formData.name,
         leader: formData.leader || null,
-        members: selectedMembers,  // ✅ Send array of member IDs
+        members: selectedMembers,
         tasks: formData.tasks,
         completion: formData.completion
       };
       
-      const response = await fetch('/api/team', {
+      const response = await fetch(`${API_BASE}/api/team`, {  // ✅ Updated
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

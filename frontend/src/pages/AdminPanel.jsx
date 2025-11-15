@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 import {
   LayoutDashboard,
   Users,
@@ -90,7 +91,7 @@ const AdminPanel = () => {
     const fetchCurrentUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/user/me', {
+        const response = await fetch(`${API_BASE}/api/user/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {

@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { API_BASE } from '../config/api';
 import { User, Mail, Briefcase, Edit2, Save, X, Camera, Users } from 'lucide-react';
 
 // ------------------ AUTH CONTEXT ------------------
@@ -19,7 +20,7 @@ const AuthProvider = ({ children }) => {
           return;
         }
 
-        const res = await fetch("/api/auth/profile", {
+        const res = await fetch(`${API_BASE}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -167,7 +168,7 @@ const ProfileDetails = ({ user, isOwner }) => {
   const fetchTeams = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/team/my-teams", {
+      const res = await fetch(`${API_BASE}/api/team/my-teams`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

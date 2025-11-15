@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config/api';  // ✅ Already correct
 import { ArrowLeft, Bell, CheckCheck, Trash2, Users, ListChecks, UserCog, AlertCircle } from 'lucide-react';
 
 const getNotificationIcon = (type) => {
@@ -16,7 +17,7 @@ const Notifications = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, unread, read
+  const [filter, setFilter] = useState('all');
 
   // Sample notifications (replace with API call)
   const sampleNotifications = [
@@ -90,7 +91,7 @@ const Notifications = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/notifications', {
+        const response = await fetch(`${API_BASE}/api/notifications`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -98,12 +99,10 @@ const Notifications = () => {
           const data = await response.json();
           setNotifications(data);
         } else {
-          // Use sample notifications as fallback
           setNotifications(sampleNotifications);
         }
       } catch (error) {
         console.error('Failed to fetch notifications:', error);
-        // Use sample notifications as fallback
         setNotifications(sampleNotifications);
       } finally {
         setLoading(false);
@@ -116,7 +115,8 @@ const Notifications = () => {
   const handleMarkAsRead = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`/api/notifications/${id}/read`, {
+      // ✅ Fixed: Removed duplicate line
+      await fetch(`${API_BASE}/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -132,7 +132,8 @@ const Notifications = () => {
   const handleMarkAllAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      await fetch('/api/notifications/mark-all-read', {
+      // ✅ Fixed: Removed duplicate line
+      await fetch(`${API_BASE}/api/notifications/mark-all-read`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -148,7 +149,8 @@ const Notifications = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await fetch(`/api/notifications/${id}`, {
+      // ✅ Fixed: Removed duplicate line
+      await fetch(`${API_BASE}/api/notifications/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

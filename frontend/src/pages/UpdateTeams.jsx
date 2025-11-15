@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config/api';
 import { ArrowLeft, Save, Users, User, Target, TrendingUp, X } from 'lucide-react';
 
 const EditTeam = () => {
@@ -28,14 +29,14 @@ const EditTeam = () => {
         const token = localStorage.getItem('token');
         
         // Fetch team details
-        const teamResponse = await fetch(`/api/team/${id}`, {
+        const teamResponse = await fetch(`${API_BASE}/api/team/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!teamResponse.ok) throw new Error('Failed to fetch team');
         const teamData = await teamResponse.json();
 
         // Fetch all users
-        const usersResponse = await fetch('/api/user', {
+        const usersResponse = await fetch(`${API_BASE}/api/user`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (usersResponse.ok) {
@@ -106,7 +107,7 @@ const EditTeam = () => {
         completion: formData.completion
       };
       
-      const response = await fetch(`/api/team/${id}`, {
+      const response = await fetch(`${API_BASE}/api/team/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
