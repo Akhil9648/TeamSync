@@ -19,6 +19,10 @@ const userSchema=new mongoose.Schema({
     },
     avatarURL:{
         type:String,
+    },
+    team:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Team"
     }
 },{timestamps:true})
 const User=mongoose.model('User',userSchema)

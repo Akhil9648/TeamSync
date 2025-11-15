@@ -79,9 +79,12 @@ export const loginUser = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d"
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
 
     return res.status(200).json({
       message: "Login successful.",
@@ -116,6 +119,31 @@ export const getProfile = async (req, res, next) => {
       message: "User fetched successfully.",
       profile: user
     });
+
+  } catch (error) {
+    next(error);
+  }
+};
+export const deleteUser = async (req, res, next) => {
+  try {
+    const self = req.params.id;      // user to delete
+    const userId = req.user.id;      // logged-in admin
+
+    if (self == userId) {
+      return res.status(400).json({ message: "You can't delete your own account" });
+    }
+
+    // FIX 1: Use User model correctly
+    const userToDelete = await User.findById(self);
+
+    if (!userToDelete) {
+      return res.status(400).json({ message: "User Not Found" });
+    }
+
+    // FIX 2: Right delete function
+    await User.findByIdAndDelete(self);
+
+    return res.status(200).json({ message: "User Deleted Successfully" });
 
   } catch (error) {
     next(error);

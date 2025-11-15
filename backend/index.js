@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './src/config/db.js';
 import authRoutes from './src/routes/auth.routes.js';
+import Userrouter from './src/routes/user.routes.js';
+import teamRouter from './src/routes/team.routes.js';
+import taskRouter from './src/routes/task.routes.js';
 
 dotenv.config();
 
@@ -20,7 +23,9 @@ app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
-
+app.use('/api/user',Userrouter);
+app.use('/api/team',teamRouter);
+app.use('/api/task',taskRouter);
 // Test route
 app.get('/', (req, res) => {
   res.send('Hello World!');
