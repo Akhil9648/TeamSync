@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Camera } from 'lucide-react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 export default function AuthPage() {
   const navigate=useNavigate();
   const [isLogin, setIsLogin] = useState(true);
@@ -216,7 +216,14 @@ export default function AuthPage() {
               </button>
             </p>
           </div>
-
+          <div className="mt-6 text-center">
+  <Link
+    to="/"
+    className="text-white/80 hover:text-white font-semibold underline transition"
+  >
+    ← Back to Homepage
+  </Link>
+</div>
         </div>
       </div>
     </div>

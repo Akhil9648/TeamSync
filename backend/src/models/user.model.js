@@ -21,8 +21,13 @@ const userSchema=new mongoose.Schema({
         type:String,
     },
     team:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:String,
         ref:"Team"
+    },
+    status:{
+        type:String,
+        enum:["Active","Inactive"],
+        default:"Active"
     }
 },{timestamps:true})
 const User=mongoose.model('User',userSchema)

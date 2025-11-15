@@ -6,6 +6,7 @@ import authRoutes from './src/routes/auth.routes.js';
 import Userrouter from './src/routes/user.routes.js';
 import teamRouter from './src/routes/team.routes.js';
 import taskRouter from './src/routes/task.routes.js';
+import activityRouter from './src/routes/activity.routes.js';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/auth", authRoutes);
 app.use('/api/user',Userrouter);
 app.use('/api/team',teamRouter);
 app.use('/api/task',taskRouter);
+app.use('/api/activity',activityRouter);
 // Test route
 app.get('/', (req, res) => {
   res.send('Hello World!');

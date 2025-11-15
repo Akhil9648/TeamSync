@@ -6,25 +6,49 @@ import User from "../models/user.model.js";
 // ----------------------------------
 const createTeam = async (req, res, next) => {
   try {
-    const { name, leaderId, memberIds } = req.body;
-
-    // Check Leader
-    const leader = await User.findById(leaderId);
-    if (!leader) return res.status(404).json({ message: "Leader Not Found" });
-
-    // Check Members
-    const members = await User.find({ _id: { $in: memberIds } });
-
+    const { name, leader, members, tasks, completion } = req.body;
+    
+    // Validate leader if provided
+    if (leader) {
+      const leaderUser = await User.findById(leader);
+      if (!leaderUser) {
+        return res.status(404).json({ message: "Leader not found" });
+      }
+    }
+    
+    // Validate members if provided
+    if (members && members.length > 0) {
+      const validMembers = await User.find({ _id: { $in: members } });
+      if (validMembers.length !== members.length) {
+        return res.status(400).json({ message: "Some members not found" });
+      }
+    }
+    
     const newTeam = await Team.create({
       name,
-      leader: leaderId,
-      members: members.map((m) => m._id),
+      leader: leader || null,
+      members: members || [],
+      tasks: tasks || 0,
+      completion: completion || 0
     });
-
+    
     return res.status(201).json({
-      message: "Team Created Successfully",
-      newTeam,
+      message: "Team created successfully",
+      team: newTeam
     });
+  } catch (error) {
+    console.error("Create team error:", error.message);
+    next(error);
+  }
+};
+
+export const getAllTeams = async (req, res, next) => {
+  try {
+    const teams = await Team.find()
+      .populate('leader', 'name email')
+      .populate('members', 'name email');  // ✅ Populate members too
+      console.log(teams);
+    res.status(200).json(teams);
   } catch (error) {
     next(error);
   }
@@ -67,30 +91,30 @@ const getTeamById = async (req, res, next) => {
 // ----------------------------------
 const updateTeam = async (req, res, next) => {
   try {
-    const { name, leaderId, memberIds } = req.body;
-
-    const team = await Team.findById(req.params.id);
-    if (!team) return res.status(404).json({ message: "Team Not Found" });
-
-    if (name) team.name = name;
-
-    if (leaderId) {
-      const leader = await User.findById(leaderId);
-      if (!leader)
-        return res.status(404).json({ message: "Leader Not Found" });
-
-      team.leader = leaderId;
+    const { name, leader, members, tasks, completion } = req.body;
+    
+    const updatedTeam = await Team.findByIdAndUpdate(
+      req.params.id,
+      { 
+        name, 
+        leader: leader || null, 
+        members: members || [], 
+        tasks: tasks || 0, 
+        completion: completion || 0 
+      },
+      { new: true }
+    ).populate('leader', 'name email').populate('members', 'name email');
+    
+    if (!updatedTeam) {
+      return res.status(404).json({ message: "Team not found" });
     }
-
-    if (memberIds) {
-      const members = await User.find({ _id: { $in: memberIds } }); // FIXED: added await
-      team.members = members.map((m) => m._id);
-    }
-
-    await team.save();
-
-    res.json({ message: "Team Updated Successfully", team });
+    
+    res.status(200).json({ 
+      message: "Team updated successfully", 
+      team: updatedTeam 
+    });
   } catch (error) {
+    console.error('Update team error:', error);
     next(error);
   }
 };
@@ -110,5 +134,20 @@ const deleteItems = async (req, res, next) => {
     next(error);
   }
 };
+// Add this to your backend temporarily and call it once
+export const fixTeams = async (req, res) => {
+  try {
+    await Team.updateMany(
+      {},
+      { $set: { completion: 0, tasks: 0 } }
+    );
+    res.json({ message: 'Teams updated' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Add route: teamRouter.get('/fix', fixTeams);
+// Then visit: http://localhost:3000/api/team/fix
 
 export { createTeam, deleteItems, updateTeam, getAllItems, getTeamById };

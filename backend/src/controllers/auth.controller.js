@@ -149,3 +149,119 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find().select("-password");
+
+    // sanitize undefined or null values for name/email
+    const cleanedUsers = users.map(user => ({
+      ...user.toObject(),
+      name: user.name || "",
+      email: user.email || "",
+    }));
+
+    return res.status(200).json(cleanedUsers);
+  } catch (error) {
+    next(error);
+  }
+};
+export const updateUser = async (req, res, next) => {
+  try {
+      const userId = req.params.id || req.user.id;
+    const { name, email, role, team, status, avatarUrl } = req.body;
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+      if(name)  user.name = name;
+      if(email)  user.email = email;
+      if(role)  user.role = role;
+      if(avatarUrl)  user.avatarUrl = avatarUrl;
+      await user.save();
+      return res.status(200).json({ message: 'User updated successfully' });
+  } catch (error) {
+    next(error); 
+  }
+}
+export const getUserById = async (req, res, next) => {
+  try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+      if(!user) return res.status(404).json({ message: 'User not found' });
+      return res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+}
+export const addUser = async (req, res, next) => {
+  try {
+      console.log(req.body);
+      const {name,email,role,team,status,password}= req.body;
+      const existingUser=await User.findOne({email});
+      if(existingUser) return res.status(400).json({message:"User Already Exists"});
+      const hashedPassword=await bcrypt.hash(password || 'DefaultPass123',10);
+      const user=await User.create({
+          name,
+          email,
+          password:hashedPassword,
+          role,
+          team,
+          status
+      });
+      return res.status(201).json({message:"User Created Successfully",user});
+  } catch (error) {
+    console.error("Add user error:", error.message); 
+    next(error);
+  }
+}
+export const getCurrentUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Get current user error:', error);
+    next(error);
+  }
+};
+export const updateUserSettings = async (req, res, next) => {
+  try {
+    const { name, email, currentPassword, newPassword, notifications } = req.body;
+    
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update basic info
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (notifications) user.notifications = notifications;
+
+    // Handle password change
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: 'Current password is required' });
+      }
+      
+      const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Current password is incorrect' });
+      }
+      
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.status(200).json({ 
+      message: 'Settings updated successfully',
+      user: { id: user._id, name: user.name, email: user.email }
+    });
+  } catch (error) {
+    console.error('Update settings error:', error);
+    next(error);
+  }
+};
