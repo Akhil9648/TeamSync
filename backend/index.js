@@ -12,8 +12,15 @@ dotenv.config();
 
 const app = express();
 const corsOptions = {
-  origin: '*',
-  credentials: true   
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://workfloww-frontend.vercel.app',        
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 const PORT = process.env.PORT || 3000;
