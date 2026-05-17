@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink, useNavigate, useOutletContext } from "react-router-dom";
 import { API_BASE } from "../config/api";
 import {
   LayoutDashboard,
@@ -30,7 +30,8 @@ const navItems = [
 ];
 
 // Welcome screen for /admin default
-const AdminWelcome = ({ user }) => {
+const AdminWelcome = () => {
+  const { user } = useOutletContext() || {};
   const navigate = useNavigate();
 
   return (
@@ -249,9 +250,9 @@ const AdminPanel = () => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-slate-600 dark:text-slate-400">
             <p>© 2025 WorkFlow. All rights reserved.</p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-blue-600 transition">Privacy Policy</a>
-              <a href="#" className="hover:text-blue-600 transition">Terms of Service</a>
-              <a href="#" className="hover:text-blue-600 transition">Support</a>
+              <a href="/#" className="hover:text-blue-600 transition">About</a>
+              <a href="/#" className="hover:text-blue-600 transition">Contact</a>
+              <a href="/#" className="hover:text-blue-600 transition">Support</a>
             </div>
           </div>
         </footer>

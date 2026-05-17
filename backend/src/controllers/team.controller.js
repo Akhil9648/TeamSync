@@ -42,12 +42,18 @@ const createTeam = async (req, res, next) => {
   }
 };
 
-export const getAllTeams = async (req, res, next) => {
+export const getMyTeams = async (req, res, next) => {
   try {
-    const teams = await Team.find()
-      .populate('leader', 'name email')
-      .populate('members', 'name email');  // ✅ Populate members too
-      console.log(teams);
+    const userId = req.user.id;
+    const teams = await Team.find({
+      $or: [
+        { leader: userId },
+        { members: userId }
+      ]
+    })
+    .populate('leader', 'name email')
+    .populate('members', 'name email')  // ✅ Populate members too
+    console.log(teams);
     res.status(200).json(teams);
   } catch (error) {
     next(error);

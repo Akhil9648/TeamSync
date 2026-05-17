@@ -55,7 +55,7 @@ export default function AuthPage() {
       // Save token for profile auth
       localStorage.setItem("token", response.data.token);
       alert("Login Successful");
-      navigate("/profile");   // 🔥 redirect after login
+      navigate("/admin");   // 🔥 redirect after login
     } else {
       alert("Registration Successful");
       setIsLogin(true);
@@ -63,6 +63,7 @@ export default function AuthPage() {
     }
     } catch (error) {
       console.error('Error:', error);
+      alert(error.response?.data?.message || "Authentication failed. Please check your credentials or try again later.");
     }
   };
 

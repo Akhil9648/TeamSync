@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { imagekit } from "../server/imagekit.js";
+import Team from "../models/team.model.js";
 
 // REGISTER USER
 export const registerUser = async (req, res, next) => {
@@ -63,22 +64,26 @@ export const registerUser = async (req, res, next) => {
 // LOGIN USER
 export const loginUser = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { email, password } = req.body;
 
     if (!email || !password) {
+      console.log("Email and password are required.");
       return res.status(400).json({ message: "Email and password are required." });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("User not found.");
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("Invalid email or password.");
       return res.status(401).json({ message: "Invalid email or password." });
     }
-
+    console.log("Login successful.");
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -265,3 +270,38 @@ export const updateUserSettings = async (req, res, next) => {
     next(error);
   }
 };
+export const MyteamUsers = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    
+    // Find all teams where the user is a leader or a member
+    const teams = await Team.find({
+      $or: [
+        { leader: userId },
+        { members: userId }
+      ]
+    });
+
+    if (!teams.length) {
+      return res.status(200).json([]);
+    }
+
+    // Collect all unique user IDs from these teams
+    const userIds = new Set();
+    teams.forEach(team => {
+      if (team.leader) userIds.add(team.leader.toString());
+      if (team.members && team.members.length > 0) {
+        team.members.forEach(member => userIds.add(member.toString()));
+      }
+    });
+
+    // Fetch the users using those IDs
+    const teamUsers = await User.find({ _id: { $in: Array.from(userIds) } }).select("-password");
+    
+    // The frontend expects a simple array of users
+    res.status(200).json(teamUsers);
+  } catch (error) {
+    console.error('Get my team users error:', error);
+    next(error);
+  }
+}
