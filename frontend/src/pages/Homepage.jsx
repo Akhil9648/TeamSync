@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mail, Phone, MapPin, Menu, X, Check, Users, Target, Award, Zap, Shield, TrendingUp, Send, ChevronRight, Sparkles, Rocket, BarChart, Globe, Code, Database, Lock, Cloud } from 'lucide-react';
+import { Mail, Phone, MapPin, Menu, X, Check, Users, Target, Award, Zap, Shield, TrendingUp, Send, ChevronRight, Sparkles, Rocket, BarChart, Globe, Code, Database, Lock, Cloud, Linkedin, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 export default function CorporateWebsite() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -13,7 +13,7 @@ export default function CorporateWebsite() {
     phone: '',
     message: ''
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);  
   const [activeTimeline, setActiveTimeline] = useState(0);
   const [statsAnimated, setStatsAnimated] = useState(false);
   const [stats, setStats] = useState({ users: 0, projects: 0, countries: 0, satisfaction: 0 });
@@ -132,29 +132,11 @@ export default function CorporateWebsite() {
 
   const team = [
     {
-      name: 'Sarah Johnson',
-      role: 'CEO & Founder',
-      image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+      name: 'Akhil Pandey',
+      role: 'Lead Developer',
+      image: 'https://ik.imagekit.io/akhilproj/avatars/WhatsApp%20Image%202025-12-04%20at%2023.22.02_05b48310%20(1).jpg',
       color: '#3b82f6'
     },
-    {
-      name: 'Michael Chen',
-      role: 'CTO',
-      image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
-      color: '#8b5cf6'
-    },
-    {
-      name: 'Emily Rodriguez',
-      role: 'Head of Design',
-      image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily',
-      color: '#ec4899'
-    },
-    {
-      name: 'David Park',
-      role: 'Head of Engineering',
-      image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-      color: '#10b981'
-    }
   ];
 
   const timeline = [
@@ -742,6 +724,14 @@ export default function CorporateWebsite() {
               />
               <h4 style={{fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem'}}>{member.name}</h4>
               <p style={{color: member.color, fontSize: '1.1rem', fontWeight: '500'}}>{member.role}</p>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'center' }}>
+                <a href="https://www.linkedin.com/in/akhilpandey9/" target="_blank" rel="noopener noreferrer" style={{ color: '#94a3b8', transition: 'color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.color = member.color} onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}>
+                  <Linkedin size={24} />
+                </a>
+                <a href="https://github.com/akhil9648" target="_blank" rel="noopener noreferrer" style={{ color: '#94a3b8', transition: 'color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.color = member.color} onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}>
+                  <Github size={24} />
+                </a>
+              </div>
             </div>
           ))}
         </div>
