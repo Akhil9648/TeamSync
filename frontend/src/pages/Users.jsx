@@ -21,13 +21,15 @@ const Users = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        // ✅ Fixed: Removed duplicate line
-        const response = await fetch(`${API_BASE}/api/user`, {
+        let response = await fetch(`${API_BASE}/api/user`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok){
+          response = await fetch(`${API_BASE}/api/user/my-teams`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        }
         const data = await response.json();
-
         const formattedUsers = data.map((user, index) => ({
           id: user.id || user._id,
           name: user.name || "",
